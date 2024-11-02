@@ -7,14 +7,28 @@ from openpyxl.utils import get_column_letter
 
 clear = lambda:os.system('clear')
 exit = lambda:os.system('exit')
+restart = lambda:os.system('py pyrate.py')
 
-film = load_workbook('data/film.xlsx')
-ws = film.active
+file_path = "data/film.xlsx"
+film = pd.read_excel(file_path)
+# print(film.index)
+film.index += 1
+# print(film.index)
 
 def movie_list():
-    file_path = 'data/film.xlsx'  
-    df = pd.read_excel(file_path)
-    print(tabulate(df, headers='keys', tablefmt='grid'))
+    print(tabulate(film, headers='keys', tablefmt='grid'))
+
+def create(name, year):
+
+    data = {
+        'name': [name.title()],
+        'year': [year]
+        }
+    data_new = pd.DataFrame(data)
+    create = pd.concat([film, data_new], ignore_index=False)
+    create.to_excel(file_path, index=False)
+    
+    
 
 # for row in range(1,11):
 #     for col in range(1,3):
@@ -22,9 +36,6 @@ def movie_list():
 #         table = [[ws[char + str(row)].value]]
 #         print(ws[char + str(row)].value , "\t", end="")
 #     print()
-
-
-    
     
 while True:
     clear()
@@ -37,7 +48,7 @@ while True:
 ╚═╝        ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
 Save your movies here!
 
-what'cu want?
+what'u want?
 [1] Movie list
 [0] Exit
         """)
@@ -46,7 +57,7 @@ what'cu want?
         clear()
         movie_list()
         print("""
-
+Action:
 [1] Add movie
 [2] Delete movie
 [3] Select movie
@@ -55,8 +66,13 @@ what'cu want?
         user = int(input("> "))
         
         if user == 1:
-            print("insert movie name, and year")
-            print("> ")
+            print("insert movie name then year")
+            name = input('Movie name > ')
+            year = input('Movie year > ')
+            create(name, year)
+            print("Completed!")
+            time.sleep(2)
+            restart()
         if user == 0:
             continue
         
