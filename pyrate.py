@@ -11,6 +11,8 @@ restart = lambda:os.system('py pyrate.py')
 
 file_path = "data/film.xlsx"
 film = pd.read_excel(file_path)
+wb = load_workbook(file_path)
+ws = wb.active
 # print(film.index)
 film.index += 1
 # print(film.index)
@@ -19,13 +21,21 @@ def movie_list():
     print(tabulate(film, headers='keys', tablefmt='grid'))
 
 def create(name, year):
-
     data = {
         'name': [name.title()],
         'year': [year]
         }
     data_new = pd.DataFrame(data)
     create = pd.concat([film, data_new], ignore_index=False)
+    create.to_excel(file_path, index=False)
+    
+def edit(name, year):
+    data = {
+        'name': [name.title()],
+        'year': [year]
+        }
+    data_new = pd.DataFrame(data)
+    df = pd.DataFrame(film)
     create.to_excel(file_path, index=False)
     
     
@@ -39,6 +49,23 @@ def create(name, year):
     
 while True:
     clear()
+    
+    # data = {
+    #     'name': [name.title()],
+    #     'year': [year]
+    #     }
+    # data_new = pd.DataFrame(data)
+    df = pd.DataFrame(film)
+    print(df)
+    df.rename(columns={
+        'film': 'Film',
+        'year': 'YEARRRR'
+    })
+    print(df)
+    break
+    create.to_excel(file_path, index=False)
+    
+    break
     print("""
 ██████╗ ██╗   ██╗██████╗  █████╗ ████████╗███████╗
 ██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
