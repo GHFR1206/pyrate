@@ -13,6 +13,7 @@ file_path = "data/film.xlsx"
 film = pd.read_excel(file_path)
 wb = load_workbook(file_path)
 ws = wb.active
+df = pd.DataFrame(film)
 # print(film.index)
 film.index += 1
 # print(film.index)
@@ -22,6 +23,7 @@ def movie_list():
 
 def create(name, year):
     data = {
+        'id': len(film)+1,
         'name': [name.title()],
         'year': [year]
         }
@@ -49,23 +51,15 @@ def edit(name, year):
     
 while True:
     clear()
-    
     # data = {
     #     'name': [name.title()],
     #     'year': [year]
     #     }
     # data_new = pd.DataFrame(data)
-    df = pd.DataFrame(film)
-    print(df)
-    df.rename(columns={
-        'film': 'Film',
-        'year': 'YEARRRR'
-    })
-    print(df)
-    break
-    create.to_excel(file_path, index=False)
-    
-    break
+    # print(len(film))
+    # break
+    # create.to_excel(file_path, index=False)
+    # break
     print("""
 ██████╗ ██╗   ██╗██████╗  █████╗ ████████╗███████╗
 ██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
@@ -103,8 +97,7 @@ Action:
         if user == 0:
             continue
         
-    elif user == 2:
-        clear()
+    elif user == 0:
         print("Bye bye :(")
         exit()
         break
