@@ -31,11 +31,12 @@ def create(name, year):
     create = pd.concat([film, data_new], ignore_index=False)
     create.to_excel(file_path, index=False)
     
-def edit(name, year):
+def edit(id, name, year):
     data = {
         'name': [name.title()],
         'year': [year]
         }
+    data_old = df.iloc[id-1]
     data_new = pd.DataFrame(data)
     df = pd.DataFrame(film)
     create.to_excel(file_path, index=False)
@@ -51,15 +52,8 @@ def edit(name, year):
     
 while True:
     clear()
-    # data = {
-    #     'name': [name.title()],
-    #     'year': [year]
-    #     }
-    # data_new = pd.DataFrame(data)
-    # print(len(film))
-    # break
-    # create.to_excel(file_path, index=False)
-    # break
+    print(df.iloc[0]['id'])
+    break
     print("""
 ██████╗ ██╗   ██╗██████╗  █████╗ ████████╗███████╗
 ██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
@@ -81,7 +75,8 @@ what'u want?
 Action:
 [1] Add movie
 [2] Delete movie
-[3] Select movie
+[3] Edit Movie
+[4] Select movie
 [0] Back
               """)
         user = int(input("> "))
@@ -94,6 +89,19 @@ Action:
             print("Completed!")
             time.sleep(2)
             restart()
+        if user == 3:
+            print("Select movie you want to edit")
+            id = int(input(print("> ")))
+            print("Input new movie name")
+            name = int(input(print("> ")))
+            print("Input new movie year")
+            year = int(input(print("> ")))
+            
+            edit(id, name, year)
+            
+            print("Edited succesfully!")
+            time.sleep(2)
+            continue
         if user == 0:
             continue
         
