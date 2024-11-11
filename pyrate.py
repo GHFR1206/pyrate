@@ -14,9 +14,7 @@ film = pd.read_excel(file_path)
 wb = load_workbook(file_path)
 ws = wb.active
 df = pd.DataFrame(film)
-# print(film.index)
 film.index += 1
-# print(film.index)
 
 def movie_list():
     print(tabulate(film, headers='keys', tablefmt='grid'))
@@ -31,18 +29,6 @@ def create(name, year):
     create = pd.concat([film, data_new], ignore_index=False)
     create.to_excel(file_path, index=False)
     
-def edit(id, name, year):
-    data = {
-        'name': [name.title()],
-        'year': [year]
-        }
-    data_old = df.iloc[id-1]
-    data_new = pd.DataFrame(data)
-    df = pd.DataFrame(film)
-    create.to_excel(file_path, index=False)
-    
-    
-
 # for row in range(1,11):
 #     for col in range(1,3):
 #         char = get_column_letter(col)
@@ -52,8 +38,6 @@ def edit(id, name, year):
     
 while True:
     clear()
-    print(df.iloc[0]['id'])
-    break
     print("""
 ██████╗ ██╗   ██╗██████╗  █████╗ ████████╗███████╗
 ██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
@@ -89,19 +73,7 @@ Action:
             print("Completed!")
             time.sleep(2)
             restart()
-        if user == 3:
-            print("Select movie you want to edit")
-            id = int(input(print("> ")))
-            print("Input new movie name")
-            name = int(input(print("> ")))
-            print("Input new movie year")
-            year = int(input(print("> ")))
             
-            edit(id, name, year)
-            
-            print("Edited succesfully!")
-            time.sleep(2)
-            continue
         if user == 0:
             continue
         
