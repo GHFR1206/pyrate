@@ -8,15 +8,17 @@ exit = lambda:os.system('exit')
 restart = lambda:os.system('py pyrate.py')
 
 def movie_list():
-    df = pd.read_excel(file_path)
+    df = pd.read_excel(file_path, converters={
+        'year': str,
+    })
     df.index+=1
     print(tabulate(df, headers='keys', tablefmt='simple_outline'))
 
 def create():
     print("\ninsert movie name")
-    name = input('> ')
+    name = input('> ').title()
     
-    if df[df["name"] == name.title()].empty != True:
+    if df[df["name"]].empty != True:
         print("\nMovie already exist!")
         time.sleep(2)
         restart()
@@ -25,11 +27,9 @@ def create():
     year = input('> ')
     print("\ninsert movie genre")
     genre = input('> ').title()
-    
-    if " " in genre and "," not in genre:
-        genre = genre.replace(" ", ", ")
-    elif " " not in genre and "," in genre:
-        genre = genre.replace(",", ", ")
+    genre = genre.replace(",", " ")
+    genre = genre.replace("  ", " ")
+    genre = genre.replace(" ", ", ")
     
     if df[df['id'] == len(df)+1].empty:
         id = len(df)+1    
@@ -55,7 +55,7 @@ def edit():
     print("\nInsert new movie year (Leave blank if no change)")
     year = input("> ")
     print("\nInsert new movie genre (Leave blank if no change)")
-    genre = input("> ")
+    genre = input("> ").title()
     
     if len(name) == 0:
         name = data.iloc[:]['name'].values[0]
@@ -64,13 +64,14 @@ def edit():
     if len(genre) == 0:
         genre = data.iloc[:]['genre'].values[0]
     
-    if " " in genre and "," not in genre:
-        genre = genre.replace(" ", ", ").title()
-    elif " " not in genre and "," in genre:
-        genre = genre.replace(",", ", ").title()
+    genre = genre.replace(",", " ")
+    genre = genre.replace("  ", " ")
+    genre = genre.replace(" ", ", ")
+
+    # print(type(year))
 
     df.at[id, 'name'] = name
-    df.at[id, 'year'] = year
+    df.at[id, 'year'] = str(year)
     df.at[id, 'genre'] = genre
     pd.DataFrame(df).to_excel(file_path, index=False)
     
@@ -122,9 +123,10 @@ def sort(index, order):
     
 while True:
     file_path = "data/film.xlsx"
-    df = pd.read_excel(file_path)
+    df = pd.read_excel(file_path, converters={
+        'year': str,
+    })
     df.index += 1
-    
     clear() 
     print("""
 ██████╗ ██╗   ██╗██████╗  █████╗ ████████╗███████╗
@@ -185,7 +187,7 @@ Action:
                 time.sleep(2)
                 continue
             clear()
-            print(tabulate(data, headers='keys', tablefmt='grid'))
+            print(tabulate(data, headers='keys', tablefmt='simple_outline'))
             
             print(f"""
 Select movie (id)!
@@ -225,12 +227,14 @@ What are u gonna do with '{data.at[1, 'name']}'?
                 edit()
                 print("\nEdited succesfully!")
                 time.sleep(2)
+                break
                 continue
                 
             # delete
             if user == 2:
                 print(f"\nyou sure want to delete '{data.at[1, 'name']}'? y/n")
-                confirm = input("> ").lower
+                confirm = input("> ")
+                confirm = confirm.lower()
                 if confirm == "y":
                     delete([data.at[1, 'id']])
                     print("\nDeleted successfully!")
@@ -280,6 +284,7 @@ What are u gonna do with '{data.at[1, 'name']}'?
         if user == 3:
             print("\nWhat genre?")
             genre = input('> ')
+            clear()
             data = searchGenres(genre)
             print(tabulate(data, headers='keys', tablefmt='simple_outline'))
             print(f"""
@@ -293,6 +298,9 @@ Select movie (id)!
             except:
                 print("\nOops, numbers only!")
                 time.sleep(2)
+                continue
+            
+            if id == 0:
                 continue
             
             data = select(id)
@@ -311,6 +319,10 @@ What are u gonna do with '{data.at[1, 'name']}'?
                 print("\nOops, numbers only!")
                 time.sleep(2)
                 continue
+            
+            if id == 0:
+                continue
+            
             # update
             if user == 1:
                 edit()
@@ -355,9 +367,6 @@ What are u gonna do with '{data.at[1, 'name']}'?
                 print("\nSuccessfully rated!")
                 time.sleep(2)
                 continue
-            
-            if user == 0:
-                continue
                     
             else:
                 print("\nOops.. wrong input!")
@@ -379,9 +388,10 @@ What index are you gonna use?
                 print("\nOops, numbers only!")
                 time.sleep(2)
                 continue
+            
             if index == 0:
-                time.sleep(1)
                 continue
+            
             print("""
 What order?
 [1] Ascending
@@ -395,14 +405,22 @@ What order?
                 print("\nOops, numbers only!")
                 time.sleep(2)
                 continue
+            
             if order == 0:
-                time.sleep(1)
                 continue
+            
+            clear()
             df = sort(index, order)
             print(tabulate(df, headers='keys', tablefmt='simple_outline'))
             print("\n[0] Back")
-            user = int(input("> "))
-                        
+            user = input("> ")
+            try:
+                user = int(user)
+            except:
+                print("\nOops, numbers only!")
+                time.sleep(2)
+                continue
+             
         if user == 0:
             continue
         else:
