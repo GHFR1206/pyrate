@@ -14,24 +14,13 @@ def movie_list():
     df.index+=1
     print(tabulate(df, headers='keys', tablefmt='simple_outline'))
 
-def create():
-    print("\ninsert movie name")
-    name = input('> ').title()
+def create(name, year, genre):
     
-    if df[df["name"]].empty != True:
-        print("\nMovie already exist!")
-        time.sleep(2)
-        restart()
-    
-    print("\ninsert movie year")
-    year = input('> ')
-    print("\ninsert movie genre")
-    genre = input('> ').title()
     genre = genre.replace(",", " ")
     genre = genre.replace("  ", " ")
     genre = genre.replace(" ", ", ")
     
-    if df[df['id'] == len(df)+1].empty:
+    if df[df['id'] == len(df)+1].empty: 
         id = len(df)+1    
     else:
         id = len(df)+2
@@ -52,10 +41,36 @@ def create():
 def edit():
     print("\nInsert new movie name (Leave blank if no change)")
     name = input("> ")
+    if df[df["name"] == name.title()].empty != True:
+        print("\nMovie already exist!")
+        time.sleep(2)
+        restart()
+    
     print("\nInsert new movie year (Leave blank if no change)")
     year = input("> ")
+        
     print("\nInsert new movie genre (Leave blank if no change)")
     genre = input("> ").title()
+        
+    if data.iloc[:]['watched'].values[0] == 'Yes':
+        print("\nInsert new rate number 1-5! (Leave blank if no change)")
+        rate = input("> ")
+        try:
+            rate = float(rate)
+        except:
+            print("\nOops, numbers only!")
+            time.sleep(2)
+            clear()
+        
+        if rate > 5:
+            print('\nOops.. too much!')
+            time.sleep(1)
+            restart()
+        
+        print("\nInsert new review! (Leave blank if no change)")
+        review = input("> ")
+        
+        rating(data.at[1, 'id'], rate, review)
     
     if len(name) == 0:
         name = data.iloc[:]['name'].values[0]
@@ -68,11 +83,10 @@ def edit():
     genre = genre.replace("  ", " ")
     genre = genre.replace(" ", ", ")
 
-    # print(type(year))
-
     df.at[id, 'name'] = name
     df.at[id, 'year'] = str(year)
     df.at[id, 'genre'] = genre
+    
     pd.DataFrame(df).to_excel(file_path, index=False)
     
 def delete(id):
@@ -80,32 +94,30 @@ def delete(id):
     pd.DataFrame(df).to_excel(file_path, index=False)
     
 def search(name):    
-    data = df[df["name"].str.contains(name)].reset_index()
+    data = df[df["name"].str.contains(name)].reset_index(drop=True)
     data.index+=1
     return data
 
 def searchGenres(genre):    
     genre = genre.title()
-    data = df[df["genre"].str.contains(genre)].reset_index()
+    data = df[df["genre"].str.contains(genre)].reset_index(drop=True)
     data.index+=1
     return data
 
 def select(id):    
-    data = df[df["id"] == id].reset_index()
+    data = df[df["id"] == id].reset_index(drop=True)
     data.index+=1
     return data
 
 def rating(id, rate, review):
-    data = df[df["id"] == id].reset_index()
-    data.index += 1
     rateint = int(rate)
     max = 5
     star = "★" * rateint + "☆" * (max - rateint) + " (" + str(rate) + ")"
     
-    data.at[id, 'rate'] = star
-    data.at[id, 'watched'] = 'Yes'
-    data.at[id, 'review'] = review
-    pd.DataFrame(data).to_excel(file_path, index=False)
+    df.at[id, 'rate'] = star
+    df.at[id, 'watched'] = 'Yes'
+    df.at[id, 'review'] = review
+    pd.DataFrame(df).to_excel(file_path, index=False)
     
 def sort(index, order):
     if index == 1:
@@ -122,11 +134,13 @@ def sort(index, order):
     return df
     
 while True:
+    
     file_path = "data/film.xlsx"
     df = pd.read_excel(file_path, converters={
         'year': str,
     })
     df.index += 1
+    
     clear() 
     print("""
 ██████╗ ██╗   ██╗██████╗  █████╗ ████████╗███████╗
@@ -171,7 +185,34 @@ Action:
         
         # create
         if user == 1:
-            create()
+            print("\ninsert movie name")
+            name = input('> ').title()
+            
+            if name == "":
+                print("\nName cant be empty!")
+                time.sleep(2)
+                continue
+            
+            if df[df["name"] == name.title()].empty != True:
+                print("\nMovie already exist!")
+                time.sleep(2)
+                restart()
+            
+            print("\ninsert movie year")
+            year = input('> ')
+            if year == "":
+                print("\nYear cant be empty!")
+                time.sleep(2)
+                continue
+            
+            print("\ninsert movie genre")
+            genre = input('> ').title()
+            if genre == "":
+                print("\nGenre cant be empty!")
+                time.sleep(2)
+                continue
+            
+            create(name, year, genre)
             print("\nCompleted!")
             time.sleep(2)
             continue
@@ -194,7 +235,7 @@ Select movie (id)!
 [0] Back
                   """)
             
-            # select
+            # search->select
             id = input("> ")
             try:
                 id = int(id)
@@ -222,15 +263,14 @@ What are u gonna do with '{data.at[1, 'name']}'?
                 print("\nOops, numbers only!")
                 time.sleep(2)
                 continue
-            # update
+            # search->update
             if user == 1:
                 edit()
                 print("\nEdited succesfully!")
                 time.sleep(2)
-                break
                 continue
                 
-            # delete
+            # search->delete
             if user == 2:
                 print(f"\nyou sure want to delete '{data.at[1, 'name']}'? y/n")
                 confirm = input("> ")
@@ -249,7 +289,7 @@ What are u gonna do with '{data.at[1, 'name']}'?
                     time.sleep(2)
                     continue
                 
-            # rating
+            # search->rating
             if user == 3:
                 print("\nInsert rate number 1-5!")
                 rate = input("> ")
@@ -303,6 +343,7 @@ Select movie (id)!
             if id == 0:
                 continue
             
+            # genre->select
             data = select(id)
             print(f"""
 What are u gonna do with '{data.at[1, 'name']}'?
@@ -323,14 +364,14 @@ What are u gonna do with '{data.at[1, 'name']}'?
             if id == 0:
                 continue
             
-            # update
+            # genre->update
             if user == 1:
                 edit()
                 print("\nEdited succesfully!")
                 time.sleep(2)
                 continue
                 
-            # delete
+            # genre->delete
             if user == 2:
                 print(f"\nyou sure want to delete '{data.at[1, 'name']}'? y/n")
                 confirm = input("> ")
@@ -345,11 +386,14 @@ What are u gonna do with '{data.at[1, 'name']}'?
                     time.sleep(2)
                     continue
                 
-            # rating
+            # genre->rating
             if user == 3:
                 print("\nInsert rate number 1-5!")
                 rate = input("> ")
-                
+                if rate == "":
+                    print("\nRate cant be empty!")
+                    time.sleep(2)
+                    restart()
                 try:
                     rate = float(rate)
                 except:
@@ -361,8 +405,14 @@ What are u gonna do with '{data.at[1, 'name']}'?
                     print('\nOops.. too much!')
                     time.sleep(1)
                     continue
+                
                 print("\nInsert ur review!")
                 review = input("> ")
+                if review == "":
+                    print("\nReview cant be empty!")
+                    time.sleep(2)
+                    restart()
+                
                 rating(data.at[1, 'id'], rate, review)
                 print("\nSuccessfully rated!")
                 time.sleep(2)
@@ -388,7 +438,7 @@ What index are you gonna use?
                 print("\nOops, numbers only!")
                 time.sleep(2)
                 continue
-            
+        
             if index == 0:
                 continue
             
@@ -423,15 +473,12 @@ What order?
              
         if user == 0:
             continue
-        else:
-            print("\nOops.. wrong input!")
-            time.sleep(1)
-            continue 
         
     elif user == 0:
         print("\nBye bye :(")
         exit()
         break
+    
     else:
         print("\nOops, wrong input!")
         time.sleep(2)
