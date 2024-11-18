@@ -211,25 +211,26 @@ Action:
             
             # create
             if user == 1:
-                print("insert movie name")
-                name = input(f'{Fore.GREEN}> ').title()
-                print(Style.RESET_ALL)
-                
-                while name == "":
-                    print(f"{Fore.RED}Name cant be empty!")
-                    print(Style.RESET_ALL)
-                    
+                while True:
+                    print("Insert movie name")
                     name = input(f'{Fore.GREEN}> ').title()
                     print(Style.RESET_ALL)
-                
-                while df[df["name"] == name.title()].empty != True:
-                    print(f"{Fore.RED}Movie already exist!")
-                    print(Style.RESET_ALL)
+                    if name == "":
+                        print(f"{Fore.RED}Name can't be empty!")
+                        print(Style.RESET_ALL)
+                        print("Insert movie name")
+                        name = input(f'{Fore.GREEN}> ').title()
+                        print(Style.RESET_ALL)
                     
-                    name = input(f'{Fore.GREEN}> ').title()
-                    print(Style.RESET_ALL)
-                
-                
+                    if name == "":
+                        continue  
+
+                    if not df[df["name"] == name].empty:
+                        print(f"{Fore.RED}Movie already exists!")
+                        print(Style.RESET_ALL)
+                        continue
+                    else:
+                        break
     
                 while True:
                     print("insert movie year")
