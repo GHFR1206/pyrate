@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import time
 from tabulate import tabulate
+from colorama import Fore
+from colorama import Style
 
 clear = lambda:os.system('clear')
 exit = lambda:os.system('exit')
@@ -39,36 +41,46 @@ def create(name, year, genre):
     pd.concat([df, data_new], ignore_index=False).to_excel(file_path, index=False)
     
 def edit():
-    print("\nInsert new movie name (Leave blank if no change)")
-    name = input("> ")
+    print("Insert new movie name (Leave blank if no change)")
+    name = input(f"{Fore.GREEN}> ")
+    print(Style.RESET_ALL)
     if df[df["name"] == name.title()].empty != True:
-        print("\nMovie already exist!")
+        print("Movie already exist!")
         time.sleep(2)
         restart()
     
-    print("\nInsert new movie year (Leave blank if no change)")
-    year = input("> ")
+    print("Insert new movie year (Leave blank if no change)")
+    year = input(f"{Fore.GREEN}> ")
+    print(Style.RESET_ALL)
         
-    print("\nInsert new movie genre (Leave blank if no change)")
-    genre = input("> ").title()
+    print("Insert new movie genre (Leave blank if no change)")
+    genre = input(f"{Fore.GREEN}> ").title()
+    print(Style.RESET_ALL)
         
     if data.iloc[:]['watched'].values[0] == 'Yes':
-        print("\nInsert new rate number 1-5! (Leave blank if no change)")
-        rate = input("> ")
+        print("Insert new rate number 1-5! (Leave blank if no change)")
+        rate = input(f"{Fore.GREEN}> ")
+        print(Style.RESET_ALL)
         try:
             rate = float(rate)
         except:
-            print("\nOops, numbers only!")
-            time.sleep(2)
-            clear()
+            print(f"{Fore.RED}Rate not changed!")
+            print(Style.RESET_ALL)
+            rate = data.iloc[:]['rate'].values[0]
+            rate = float(rate[7:10])
         
         if rate > 5:
-            print('\nOops.. too much!')
+            print(f'{Fore.RED}Oops.. too much!')
+            print(Style.RESET_ALL)
             time.sleep(1)
             restart()
         
-        print("\nInsert new review! (Leave blank if no change)")
-        review = input("> ")
+        print("Insert new review! (Leave blank if no change)")
+        review = input(f"{Fore.GREEN}> ")
+        print(Style.RESET_ALL)
+        
+        if len(review) == 0:
+            review = data.iloc[:]['review'].values[0]
         
         rating(data.at[1, 'id'], rate, review)
     
@@ -155,12 +167,14 @@ what'u want?
 [1] Movie list
 [0] Exit
         """)
-    user = input("> ")
+    user = input(f"{Fore.GREEN}> ")
+    print(Style.RESET_ALL)
     
     try:
         user = int(user)
     except:
-        print("\nOops, numbers only!")
+        print(f"{Fore.RED}Oops, numbers only!")
+        print(Style.RESET_ALL)
         time.sleep(2)
         continue
     
@@ -175,56 +189,66 @@ Action:
 [4] Sort
 [0] Back
               """)
-        user = input("> ")
+        user = input(f"{Fore.GREEN}> ")
+        print(Style.RESET_ALL)
         try:
             user = int(user)
         except:
-            print("\nOops, numbers only!")
+            print(f"{Fore.RED}Oops, numbers only!")
+            print(Style.RESET_ALL)
             time.sleep(2)
             continue
         
         # create
         if user == 1:
-            print("\ninsert movie name")
-            name = input('> ').title()
+            print("insert movie name")
+            name = input(f'{Fore.GREEN}> ').title()
+            print(Style.RESET_ALL)
             
             if name == "":
-                print("\nName cant be empty!")
+                print(f"{Fore.RED}Name cant be empty!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             
             if df[df["name"] == name.title()].empty != True:
-                print("\nMovie already exist!")
+                print("Movie already exist!")
                 time.sleep(2)
                 restart()
             
-            print("\ninsert movie year")
-            year = input('> ')
+            print("insert movie year")
+            year = input(f'{Fore.GREEN}> ')
+            print(Style.RESET_ALL)
             if year == "":
-                print("\nYear cant be empty!")
+                print(f"{Fore.RED}Year cant be empty!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             
-            print("\ninsert movie genre")
-            genre = input('> ').title()
+            print("insert movie genre")
+            genre = input(f'{Fore.GREEN}> ').title()
+            print(Style.RESET_ALL)
             if genre == "":
-                print("\nGenre cant be empty!")
+                print("fG{Fore.RED}enre cant be empty!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             
             create(name, year, genre)
-            print("\nCompleted!")
+            print("Completed!")
             time.sleep(2)
             continue
                       
         # Search 
         if user == 2:
-            print("\nType movie name")
-            name = input("> ").title()
+            print("Type movie name")
+            name = input(f"{Fore.GREEN}> ").title()
+            print(Style.RESET_ALL)
             data = search(name)
             data = pd.DataFrame(data)
             if search(name).empty:
-                print("\nMovie not found!")
+                print(f"{Fore.RED}Movie not found!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             clear()
@@ -236,11 +260,13 @@ Select movie (id)!
                   """)
             
             # search->select
-            id = input("> ")
+            id = input(f"{Fore.GREEN}> ")
+            print(Style.RESET_ALL)
             try:
                 id = int(id)
             except:
-                print("\nOops, numbers only!")
+                print(f"{Fore.RED}Oops, numbers only!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             if id == 0:
@@ -256,59 +282,74 @@ What are u gonna do with '{data.at[1, 'name']}'?
 [0] Back  
                     """)
             
-            user = input("> ")
+            user = input(f"{Fore.GREEN}> ")
+            print(Style.RESET_ALL)
             try:
                 user = int(user)
             except:
-                print("\nOops, numbers only!")
+                print(f"{Fore.RED}Oops, numbers only!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             # search->update
             if user == 1:
                 edit()
-                print("\nEdited succesfully!")
+                print("Edited succesfully!")
                 time.sleep(2)
                 continue
                 
             # search->delete
             if user == 2:
-                print(f"\nyou sure want to delete '{data.at[1, 'name']}'? y/n")
-                confirm = input("> ")
+                print(f"you sure want to delete '{data.at[1, 'name']}'? y/n")
+                confirm = input(f"{Fore.GREEN}> ")
+                print(Style.RESET_ALL)
                 confirm = confirm.lower()
                 if confirm == "y":
                     delete([data.at[1, 'id']])
-                    print("\nDeleted successfully!")
+                    print("Deleted succesfully!")
                     time.sleep(2)
                     continue
                 elif confirm == "n":
-                    print("\nCancelling..")
+                    print("Cancelling..")
                     time.sleep(2)
                     continue
                 else:
-                    print("\nOops, bad input!")
+                    print(f"{Fore.RED}Oops, bad input!")
+                    print(Style.RESET_ALL)
                     time.sleep(2)
                     continue
                 
             # search->rating
             if user == 3:
-                print("\nInsert rate number 1-5!")
-                rate = input("> ")
+                
+                if data.at[1, 'watched'] == "Yes":
+                    print(f"{Fore.RED}This movie already watched! go to edit if you want to change it!")
+                    print(Style.RESET_ALL)
+                    time.sleep(3)
+                    continue
+                
+                print("Insert rate number 1-5!")
+                rate = input(f"{Fore.GREEN}> ")
+                print(Style.RESET_ALL)
                 
                 try:
                     rate = float(rate)
                 except:
-                    print("\nOops, numbers only!")
+                    print(f"{Fore.RED}Oops, numbers only!")
+                    print(Style.RESET_ALL)
                     time.sleep(2)
                     continue
                 
                 if rate > 5:
-                    print('\nOops.. too much!')
+                    print(f'{Fore.RED}Oops.. too much!')
+                    print(Style.RESET_ALL)
                     time.sleep(1)
                     continue
-                print("\nInsert ur review!")
-                review = input("> ")
+                print("Insert ur review!")
+                review = input(f"{Fore.GREEN}> ")
+                print(Style.RESET_ALL)
                 rating(data.at[1, 'id'], rate, review)
-                print("\nSuccessfully rated!")
+                print("Succesfully rated!")
                 time.sleep(2)
                 continue
             
@@ -316,14 +357,16 @@ What are u gonna do with '{data.at[1, 'name']}'?
                 continue
                     
             else:
-                print("\nOops.. wrong input!")
+                print(f"{Fore.RED}Oops.. wrong input!")
+                print(Style.RESET_ALL)
                 time.sleep(1)
                 continue 
          
         # genre
         if user == 3:
-            print("\nWhat genre?")
-            genre = input('> ')
+            print("What genre?")
+            genre = input(f'{Fore.GREEN}> ')
+            print(Style.RESET_ALL)
             clear()
             data = searchGenres(genre)
             print(tabulate(data, headers='keys', tablefmt='simple_outline'))
@@ -331,12 +374,14 @@ What are u gonna do with '{data.at[1, 'name']}'?
 Select movie (id)!
 [0] Back
                     """)
-            id = input("> ")
+            id = input(f"{Fore.GREEN}> ")
+            print(Style.RESET_ALL)
             
             try:
                 id = int(id)
             except:
-                print("\nOops, numbers only!")
+                print(f"{Fore.RED}Oops, numbers only!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             
@@ -353,11 +398,13 @@ What are u gonna do with '{data.at[1, 'name']}'?
 [0] Back  
                         """)
             
-            user = input("> ")
+            user = input(f"{Fore.GREEN}> ")
+            print(Style.RESET_ALL)
             try:
                 user = int(user)
             except:
-                print("\nOops, numbers only!")
+                print(f"{Fore.RED}Oops, numbers only!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             
@@ -367,59 +414,67 @@ What are u gonna do with '{data.at[1, 'name']}'?
             # genre->update
             if user == 1:
                 edit()
-                print("\nEdited succesfully!")
+                print("Edited succesfully!")
                 time.sleep(2)
                 continue
                 
             # genre->delete
             if user == 2:
-                print(f"\nyou sure want to delete '{data.at[1, 'name']}'? y/n")
-                confirm = input("> ")
+                print(f"you sure want to delete '{data.at[1, 'name']}'? y/n")
+                confirm = input(f"{Fore.GREEN}> ")
+                print(Style.RESET_ALL)
                 confirm.lower
                 if confirm == "y":
                     delete([data.at[1, 'id']])
-                    print("\nDeleted successfully!")
+                    print("Deleted succesfully!")
                     time.sleep(2)
                     continue
                 else:
-                    print("\nCancelling..")
+                    print("Cancelling..")
                     time.sleep(2)
                     continue
                 
             # genre->rating
             if user == 3:
-                print("\nInsert rate number 1-5!")
-                rate = input("> ")
+                print("Insert rate number 1-5!")
+                rate = input(f"{Fore.GREEN}> ")
+                print(Style.RESET_ALL)
                 if rate == "":
-                    print("\nRate cant be empty!")
+                    print(f"{Fore.RED}Rate cant be empty!")
+                    print(Style.RESET_ALL)
                     time.sleep(2)
                     restart()
                 try:
                     rate = float(rate)
                 except:
-                    print("\nOops, numbers only!")
+                    print(f"{Fore.RED}Oops, numbers only!")
+                    print(Style.RESET_ALL)
                     time.sleep(2)
                     continue
                 
                 if rate > 5:
-                    print('\nOops.. too much!')
+                    print(f'{Fore.RED}Oops.. too much!')
+                    print(Style.RESET_ALL)
                     time.sleep(1)
                     continue
                 
-                print("\nInsert ur review!")
-                review = input("> ")
+                print("Insert ur review!")
+                review = input(f"{Fore.GREEN}> ")
+                print(Style.RESET_ALL)
                 if review == "":
-                    print("\nReview cant be empty!")
+                    print("Rfe{Fore.RED}view cant be empty!")
+                    print(Style.RESET_ALL)
                     time.sleep(2)
                     restart()
                 
                 rating(data.at[1, 'id'], rate, review)
-                print("\nSuccessfully rated!")
+                print("Succesfully rated!")
                 time.sleep(2)
                 continue
                     
             else:
-                print("\nOops.. wrong input!")
+                print(f"{Fore.RED}Oops.. wrong input!")
+                print(Style.RESET_ALL)
                 time.sleep(1)
                 continue
          
@@ -431,14 +486,22 @@ What index are you gonna use?
 [2] Year
 [0] Back
                   """)
-            index = input("> ")
+            index = input(f"{Fore.GREEN}> ")
+            print(Style.RESET_ALL)
             try:
                 index = int(index)
             except:
-                print("\nOops, numbers only!")
+                print(f"{Fore.RED}Oops, numbers only!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
-        
+            
+            if index not in {1, 2}:
+                print(f"{Fore.RED} Oops, wrong number!")
+                print(Style.RESET_ALL)
+                time.sleep(2)
+                continue
+            
             if index == 0:
                 continue
             
@@ -448,39 +511,54 @@ What order?
 [2] Descending
 [0] Back
                   """)
-            order = input("> ")
+            order = input(f"{Fore.GREEN}> ")
+            print(Style.RESET_ALL)
             try:
                 order = int(order)
             except:
-                print("\nOops, numbers only!")
+                print(f"{Fore.RED}Oops, numbers only!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
             
             if order == 0:
                 continue
             
+            if order not in {1, 2}:
+                print(f"{Fore.RED} Oops, wrong number!")
+                print(Style.RESET_ALL)
+                time.sleep(2)
+                continue
+            
             clear()
             df = sort(index, order)
             print(tabulate(df, headers='keys', tablefmt='simple_outline'))
-            print("\n[0] Back")
-            user = input("> ")
+            print("[0] Back")
+            user = input(f"{Fore.GREEN}> ")
+            print(Style.RESET_ALL)
             try:
                 user = int(user)
             except:
-                print("\nOops, numbers only!")
+                print(f"{Fore.RED}Oops, numbers only!")
+                print(Style.RESET_ALL)
                 time.sleep(2)
                 continue
              
         if user == 0:
             continue
+        else:
+            print(f"{Fore.RED} Oops, wrong number!")
+            print(Style.RESET_ALL)
+            time.sleep(2)
         
     elif user == 0:
-        print("\nBye bye :(")
+        print("Bye bye :(")
         exit()
         break
     
     else:
-        print("\nOops, wrong input!")
+        print(f"{Fore.RED}Oops, wrong input!")
+        print(Style.RESET_ALL)
         time.sleep(2)
         continue
         
